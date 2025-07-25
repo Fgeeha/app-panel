@@ -1,0 +1,13 @@
+[Unit]
+Description=Flask App Panel (Application Links Page)
+After=network.target
+
+[Service]
+User=USER
+WorkingDirectory=/home/USER/app-panel
+ExecStart=/home/USER/app-panel/.venv/bin/python app.py
+Restart=always
+Environment=PYTHONUNBUFFERED=1
+
+[Install]
+WantedBy=multi-user.target
