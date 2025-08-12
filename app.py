@@ -6,8 +6,11 @@ app = Flask(__name__)
 
 CONFIG_PATH = os.environ.get("APPS_YAML_PATH", "apps.yaml")
 
-with open(CONFIG_PATH, "r", encoding="utf-8") as f:
-    apps = yaml.safe_load(f)
+
+def load_apps():
+    """Read the YAML configuration on demand."""
+    with open(CONFIG_PATH, "r", encoding="utf-8") as f:
+        return yaml.safe_load(f)
 
 HTML_TEMPLATE = """
 <!DOCTYPE html>
@@ -38,7 +41,7 @@ HTML_TEMPLATE = """
 
 @app.route("/")
 def index():
-    return render_template_string(HTML_TEMPLATE, apps=apps)
+    return render_template_string(HTML_TEMPLATE, apps=load_apps())
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=80)
