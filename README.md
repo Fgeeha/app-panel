@@ -17,6 +17,13 @@ cp apps.yaml.example apps.yaml
 
 Панель доступна на `http://localhost:8082`.
 
+`python app.py` — только для разработки (встроенный сервер Flask). В рабочем режиме
+панель запускается под gunicorn:
+
+```bash
+.venv/bin/gunicorn --workers 2 --timeout 30 --bind 0.0.0.0:8082 app:app
+```
+
 ## Конфигурация `apps.yaml`
 
 Список приложений. Обязательные поля — `name` и `url`, `description` необязательно.
@@ -57,6 +64,15 @@ sudo systemctl daemon-reload
 sudo systemctl enable --now app-panel
 ```
 
+Юнит запускает gunicorn и содержит проверку готовности: `ExecStartPost` опрашивает
+`/healthz`, поэтому `systemctl start` завершается успешно только после того, как
+панель начала отвечать; при отсутствии ответа за `TimeoutStartSec=30` старт падает.
+Упавший процесс поднимает `Restart=always`, зависший воркер — `gunicorn --timeout 30`.
+
+Перечитать конфигурацию с нулевым простоем: `sudo systemctl reload app-panel`
+(`HUP` для gunicorn). Для правки `apps.yaml` перезагрузка не нужна — файл
+читается на каждый запрос.
+
 ## Проверка
 
 ```bash
@@ -64,3 +80,8 @@ sudo systemctl enable --now app-panel
 ```
 
 Скрипт проверяет разбор конфигурации, обработку ошибок и оба маршрута; при успехе выводит `OK`.
+
+## Планы
+
+Панель не имеет аутентификации и рассчитана на доверенную локальную сеть.
+Варианты закрытия доступа разобраны в [TODO.md](TODO.md).

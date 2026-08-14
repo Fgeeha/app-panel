@@ -5,11 +5,16 @@ After=network.target
 [Service]
 User=USER
 WorkingDirectory=/home/USER/app-panel
-ExecStart=/home/USER/app-panel/.venv/bin/python app.py
-Restart=always
 Environment=PYTHONUNBUFFERED=1
 Environment=APPS_YAML_PATH=/home/USER/app-panel/apps.yaml
 Environment=PORT=8082
+ExecStart=/home/USER/app-panel/.venv/bin/gunicorn --workers 2 --timeout 30 --bind 0.0.0.0:${PORT} --access-logfile - app:app
+# Готовность: старт считается успешным только после ответа /healthz
+ExecStartPost=/bin/sh -c 'until curl -fsS -o /dev/null http://127.0.0.1:${PORT}/healthz; do sleep 0.5; done'
+TimeoutStartSec=30
+ExecReload=/bin/kill -HUP $MAINPID
+Restart=always
+RestartSec=2
 
 [Install]
 WantedBy=multi-user.target
