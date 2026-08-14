@@ -8,6 +8,8 @@ WorkingDirectory=/home/USER/app-panel
 ExecStart=/home/USER/app-panel/.venv/bin/python app.py
 Restart=always
 Environment=PYTHONUNBUFFERED=1
+Environment=APPS_YAML_PATH=/home/USER/app-panel/apps.yaml
+Environment=PORT=8082
 
 [Install]
 WantedBy=multi-user.target

@@ -1,0 +1,12 @@
+# Скопируйте в apps.yaml: cp apps.yaml.example apps.yaml
+# Список приложений. Обязательные поля: name, url. Поле description необязательно.
+- name: Grafana
+  url: http://192.168.1.10:3000
+  description: Мониторинг и дашборды
+
+- name: Portainer
+  url: http://192.168.1.10:9000
+  description: Управление контейнерами
+
+- name: Router
+  url: http://192.168.1.1
